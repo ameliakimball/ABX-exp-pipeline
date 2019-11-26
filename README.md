@@ -4,9 +4,7 @@ README.md
 
 #ABX perception experiments
 
-This folder contains everything necessary to launch a set of ABX experiments  and clean and analyse the data.
-
-
+This folder contains everything necessary to launch the geomphon ABX experiments and clean and analyse the data.
 
 
 ### Required packages and libraries
@@ -15,26 +13,55 @@ This folder contains everything necessary to launch a set of ABX experiments  an
 **Python**
 
 ```
- standard_format: pip install git+git://github.com/geomphon/standard-format.git@v0.1#egg=standard_format
-
- Custom fork of python_speech_features: pip install git+git://github.com/geomphon/python_speech_features_geomphon.git@v1.0GEOMPH#egg=python_speech_features
-
- fastdtw==0.3.2 (pip)
- numpy
- scipy
- h5py==2.6.0
- ffmpeg
+ #pip: 
  pandas
- simanneal
+ numpy
+ scipy 
+ ffmpeg
+ fastdtw==0.3.2 
+ cython
  scikit-learn
- cython 
- textgrid pip install git+git://github.com/kylebgorman/textgrid.git
+ simanneal
  pydub
--  shennong   see install isntructions here:  https://coml.lscp.ens.fr/docs/shennong/installation.html 
-- pip install h5features
-- pip install json_tricks
-- pykaldi  and dependencies including pyclif  ( see    https://github.com/pykaldi/pykaldi#installation)
+ h5py==2.6.0
+
+
+standard_format:
+ 	pip install git+git://github.com/geomphon/standard-format.git@v0.1#egg=standard_format
+Custom fork of python_speech_features:
+ 	pip install git+git://github.com/geomphon/python_speech_features_geomphon.git@v1.0GEOMPH#egg=python_speech_features
+textgrid:   	
+	pip install git+git://github.com/kylebgorman/textgrid.git
+	
+##For acosutic distances
+## required: conda, brew 
+
+	# install shennong dependencies (all excepted pykaldi)
+sed '/pykaldi/d' environment.yml > environment.macos.yml
+conda env create --name shennong -f environment.macos.yml
+conda activate shennong
+
+# install pykaldi (see https://github.com/pykaldi/pykaldi#from-source)
+git clone https://github.com/pykaldi/pykaldi.git
+cd pykaldi
+brew install automake cmake git graphviz libtool pkg-config wget
+pip install --upgrade pip setuptools numpy pyparsing ninja
+cd tools
+./check_dependencies.sh
+./install_protobuf.sh
+./install_clif.sh
+./install_kaldi.sh
+cd ..
+python setup.py install
+cd ..
+
+
+# install shennong
+make install
+make test
+	
 ```
+
 
 **R**
 
@@ -59,12 +86,10 @@ For stimuli creation:
 
 3) phoneme_info.csv
 
-This is a .csv file with three columns that lists the Label, language, and Phoneme for each label in the textgrids. in our data, the stimuli were either Hindi or English, and were labled 
+This is a .csv file with three columns that lists the Label, language, and Phoneme for each label in the textgrids. in our data. Note that if a phone is marked "NA" in the language column it will be skipped in the stimuli creation pipeline 
 		Label,Language,Phoneme
 		AKA,NA,k
 		AKHA,ENG,kʰ
-
-
 
 
 
@@ -96,15 +121,17 @@ There are five parts to this pipeline.  All parts have commands in the makefile,
 	-caculates acoustic distances between files for each of the subset of triplets
 	-optimizes a stimuli list of length 150 of the subset of triplets
 	-concatenates soundfiles to create an audio file for each of the 150 selected triplets
-	-saves that audiofile as .mp3 and .ogg for later use in the experiment
+#FIXME-check?	-saves that audiofile as .mp3 and .ogg for later use in the experiment
 
 
 ## 2. geomphon scores 
 
 geomphon scores are calculated following  Dunbar & Dupoux 2016 (https://www.frontiersin.org/articles/10.3389/fpsyg.2016.01061/full#h9). 
-Code for
-
+code for these calculations is 
 https://github.com/bootphon/contrastive-symmetry/
+The setup in this folder assumes that you already have geomphon scores(or other predictors of interest)
+and that they are present in the form of file 
+#FIXME--> add filename here. 
 
 
 ## 3. LMEDs 
@@ -136,8 +163,7 @@ put the entire LMEDs file on a server (or run locally, see LMEDs manual here:___
 
 input:  
   folder of raw data downloaded from LMEDs OR folder of anonymized data 
-
- download the folder of LMEDS results files from the server and put it in folder #FIXME_____
+  download the folder of LMEDS results files from the server and put it in folder #FIXME_____
 
 
  if necessary: anonymize data 
