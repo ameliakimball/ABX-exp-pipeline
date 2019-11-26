@@ -55,7 +55,6 @@ cd ..
 python setup.py install
 cd ..
 
-
 # install shennong
 make install
 make test
@@ -108,7 +107,8 @@ Step 3 : Put your `.wav` in `stimuli_raw/wav/`
 There are five parts to this pipeline.  All parts have commands in the makefile, and each part has a folder
 
 
-## 1. stimuli 
+## 1. 1_stimuli 
+#stimuli building, stimuli selection, and design. 
        takes as input: 
        		.wav files 
        		.text grids 
@@ -124,8 +124,9 @@ There are five parts to this pipeline.  All parts have commands in the makefile,
 #FIXME-check?	-saves that audiofile as .mp3 and .ogg for later use in the experiment
 
 
-## 2. geomphon scores 
-
+##2. 2_validation
+#takes the design above and tests the model used 
+ ##geomphon scores 
 geomphon scores are calculated following  Dunbar & Dupoux 2016 (https://www.frontiersin.org/articles/10.3389/fpsyg.2016.01061/full#h9). 
 code for these calculations is 
 https://github.com/bootphon/contrastive-symmetry/
@@ -134,7 +135,7 @@ and that they are present in the form of file
 #FIXME--> add filename here. 
 
 
-## 3. LMEDs 
+## 3. 3_LMEDs 
 
 For experiment creation: 
 
@@ -158,13 +159,12 @@ put the entire LMEDs file on a server (or run locally, see LMEDs manual here:___
 		output folders  should have write permission 
 
 
-
-## 4. results anonymization and cleaning 
+## 4. 4_results 
+#results anonymization and cleaning 
 
 input:  
   folder of raw data downloaded from LMEDs OR folder of anonymized data 
   download the folder of LMEDS results files from the server and put it in folder #FIXME_____
-
 
  if necessary: anonymize data 
 	change subject info using anonymize_lmeds_data_filenames.py
@@ -176,7 +176,8 @@ filter and clean data
 
 
 
-## 5. modeling of results.  
+## 5. 5_model
+#modeling  and visualization
 
  Results are modeled in a bayesian 
 

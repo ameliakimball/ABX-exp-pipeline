@@ -1,11 +1,11 @@
 all: stimuli_triplets results.csv
 
 abx_intervals.txt: 
-	python src/textgrid_to_abx_item_file_word.py word \
-stimuli_raw/textGrid/ stimuli_raw/wav/ > abx_intervals.txt
+	python stimuli/textgrid_to_abx_item_file_word.py word \
+stimuli/stimuli_raw/textGrid/ stimuli/stimuli_raw/wav/ > abx_intervals.txt
 
 intervals.csv: abx_intervals.txt
-	Rscript --vanilla add_meta_information_to_item_file.Rscript abx_intervals.txt \
+	Rscript --vanilla stimuli/add_meta_information_to_item_file.Rscript abx_intervals.txt \
 phoneme_info.csv intervals.csv
 
 all_triplets.csv.bz2: intervals.csv
@@ -21,26 +21,26 @@ all_triplets.csv design.csv \
 && rm all_triplets.csv
 
 pairs.csv: design.csv 
-	Rscript --vanilla triplets_to_pairs.Rscript design.csv pairs.csv
+	Rscript --vanilla stimuli/triplets_to_pairs.Rscript design.csv pairs.csv
 
 distances_by_pair.csv: pairs.csv
-	python src/wav_to_distance.py --njobs 1 pairs.csv \
+	python stimuli/wav_to_distance.py --njobs 1 pairs.csv \
 bottleneck_config_shennong.yaml distances_by_pair.csv
 
 triplets.csv: distances_by_pair.csv
-	Rscript --vanilla distance_pairs_to_triplets.Rscript \
+	Rscript --vanilla stimuli/distance_pairs_to_triplets.Rscript \
 distances_by_pair.csv triplets.csv
 
 exp_length_stim_list.csv: triplets.csv
-	Rscript --vanilla stimuli_selection.Rscript \
+	Rscript --vanilla stimuli/stimuli_selection.Rscript \
 triplets.csv exp_length_stim_list.csv
 
 final_stimuli_list.csv:  exp_length_stim_list.csv
-	python optimize_design.py --desired-energy .0001 --seed 3005 \
+	python stimuli/optimize_design.py --desired-energy .0001 --seed 3005 \
 exp_length_stim_list.csv final_stimuli_list.csv
 
 stimuli_triplets: triplets.csv
-	python save_triplets_to_wavs.py triplets.csv stimuli_triplets 
+	python stimuli/save_triplets_to_wavs.py triplets.csv stimuli_triplets 
 
 lmeds_output/raw: 
 	mkdir -p lmeds_output_raw && python \
