@@ -4,36 +4,36 @@ abx_intervals.txt:
 	python 1_stimuli/textgrid_to_abx_item_file_word.py word \
 stimuli/stimuli_raw/textGrid/ stimuli/stimuli_raw/wav/ > abx_intervals.txt
 
-intervals.csv: abx_intervals.txt
+intervals.csv:
 	Rscript --vanilla 1_stimuli/add_meta_information_to_item_file.Rscript abx_intervals.txt \
 phoneme_info.csv intervals.csv
 
-all_triplets.csv.bz2: intervals.csv
+all_triplets.csv.bz2: 
 	python 1_stimuli/generate_triplets.py \
 --constraints-ab='(language_TGT!=language_OTH)&(language_TGT==language_TGT)&(language_OTH==language_OTH)&(sex_TGT==sex_OTH)&(speaker_TGT!=speaker_OTH)' \
 --constraints-ax='(sex_TGT!=sex_X)' intervals.csv all_triplets.csv \
 && bzip2 all_triplets.csv
 
-design.csv: all_triplets.csv.bz2
+design.csv: 
 	bunzip2 -k all_triplets.csv.bz2 \
 && python 1_stimuli/optimize_design.py --desired-energy .074 --seed 3004 \
 all_triplets.csv design.csv \
 && rm all_triplets.csv
 
-pairs.csv: design.csv 
+pairs.csv: 
 	Rscript --vanilla 1_stimuli/triplets_to_pairs.Rscript design.csv pairs.csv
 
-distances_by_pair.csv: pairs.csv
+distances_by_pair.csv: 
 	python 1_stimuli/wav_to_distance.py --njobs 1 pairs.csv \
 bottleneck_config_shennong.yaml distances_by_pair.csv
 
-triplets.csv: distances_by_pair.csv
+triplets.csv: 
 	Rscript --vanilla 1_stimuli/distance_pairs_to_triplets.Rscript \
 distances_by_pair.csv triplets.csv
 
-exp_length_pairs.csv: triplets.csv
+exp_length_pairs.csv: 
 	Rscript --vanilla 1_stimuli/stimuli_selection.Rscript \
-triplets.csv exp_length_pairs.csv
+1_stimuli/distances_by_pair.csv exp_length_pairs.csv \
 &&	Rscript --vanilla 1_stimuli/distance_pairs_to_triplets.Rscript \
 exp_length_pairs.csv exp_length_triplets.csv
 
