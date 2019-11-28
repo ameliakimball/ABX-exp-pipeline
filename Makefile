@@ -44,6 +44,10 @@ exp_length_triplets.csv final_stimuli_list.csv
 stimuli_triplets: triplets.csv
 	python 1_stimuli/save_triplets_to_wavs.py triplets.csv stimuli_triplets 
 
+run_brms_mods: 
+	Rscript --vanilla 2_validation/run_brms_mods.R new_144 dinst2_30subjs \
+	2_validation/model_fits_rds/
+
 lmeds_output/raw: 
 	mkdir -p lmeds_output_raw && python \
 ../../src/anonymize_lmeds_data_filenames.py ${RAW_DATA_PATH} lmeds_output/raw \
