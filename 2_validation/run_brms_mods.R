@@ -4,11 +4,11 @@
 ##### brms #####
 ################
 ARGS <- commandArgs(TRUE)
-EXPERIMENT <- ARGS[1] # "hindi" #
-DATA_INST <- ARGS[2] #"dinst7" #
+EXPERIMENT <- ARGS[1] # "new_144" #
+DATA_INST <- ARGS[2] #"dinst2_30subjs" #
 RDS_FOLDER <- ARGS[3] #"model_fits_rds/" #
 
-BATCH_SIZE <- 3
+BATCH_SIZE <- 2
 
 library(brms)
 library(doParallel)
@@ -60,8 +60,8 @@ for (batch_start in batch_starts){
         
       brms_data <- readr::read_csv(paste0("sampled_data/",master_df$csv_filename[i]))
       
-     # not_run <- TRUE
-      #while (not_run) {
+     # not_run <- TRUE # this is supposed to help restart when the program is stuck
+      #while (not_run) { #but isntead it breaks the whole thing. 
      #   tryCatch({
           brms_mods[[i]] <- brms::brm(formulanl,
                                             data = brms_data,
