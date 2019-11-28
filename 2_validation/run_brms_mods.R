@@ -6,7 +6,7 @@
 ARGS <- commandArgs(TRUE)
 EXPERIMENT <- ARGS[1] # "new_144" #
 DATA_INST <- ARGS[2] #"dinst2_30subjs" #
-RDS_FOLDER <- ARGS[3] #"model_fits_rds/" #
+RDS_FOLDER <- ARGS[3] #"2_validation/model_fits_rds/" #
 
 BATCH_SIZE <- 2
 
@@ -17,11 +17,11 @@ options(cores=20) #ceiling number of cores to use total
 options(mc.cores = 4)#cores per model (= should equal numb of chains) 
 registerDoParallel(cores=4)
 
-model_fns <-"fn_model_comparison_functions.R"
+model_fns <-"2_validation/fn_model_comparison_functions.R"
 source(model_fns)
 
-source("fn_build_brms_formula.R")
-source("fn_build_brms_priors.R")
+source("2_validation/fn_build_brms_formula.R")
+source("2_validation/fn_build_brms_priors.R")
 
 master_df<-readr::read_csv(paste0("master_df_",
                                     EXPERIMENT,
