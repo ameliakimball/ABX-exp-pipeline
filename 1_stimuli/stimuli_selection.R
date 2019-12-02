@@ -23,7 +23,8 @@
 PAIRS <-"1_stimuli/distances_by_pair.csv" # ARGS[1] #
 
 # Output filtered subset of these 
-OUTPUT <- "1_stimuli/exp_length_pairs.csv" #ARGS[2]# 
+OUTPUT_4_each <- "2_validation/design_4_each.csv" #ARGS[2] # 
+OUTPUT_3_each <- "2_validation/design_3_each.csv" #ARGS[3] #
 
 pairs_w_dist <- readr::read_csv(PAIRS)
 
@@ -33,10 +34,9 @@ pairs_w_dist <- readr::read_csv(PAIRS)
 #sample one of each phoneme pair
 #use join to select triplets that match 
 
-filt_diff_pairs <-  dplyr::filter(pairs_w_dist, target_other=="OTH")%>%
+filt_diff_pairs_4_each <-  dplyr::filter(pairs_w_dist, target_other=="OTH")%>%
                     dplyr::filter(.,phone_1!="z"&phone_2!="z")%>%
-                    dplyr::filter(!(phone_1=="ɽʱ" & phone_2 == "d͡ʒ"))%>%
-                    dplyr::filter(!(phone_1=="d͡ʒ"& phone_2 =="ɽʱ"))%>%
+                    dplyr::filter(.,phone_1!="ɽʱ"&phone_2!="ɽʱ")%>%
                     dplyr::group_by(.,phone_1, phone_2, language_1) %>%
                     dplyr::summarise(.,mean_dist = mean(distance))%>% 
                     dplyr::ungroup(.) %>%
@@ -45,45 +45,28 @@ filt_diff_pairs <-  dplyr::filter(pairs_w_dist, target_other=="OTH")%>%
                     dplyr::top_n(., -4,mean_dist) %>%
                     dplyr::ungroup(.) %>%
                     dplyr::select(phone_1,phone_2,mean_dist) %>%
-                    dplyr::rename(. ,phone_HIN = phone_1, phone_ENG = phone_2)
-                    
+                    dplyr::rename(. ,phone_HIN = phone_1, phone_ENG = phone_2)%>%
+                    dplyr::slice(rep(1:nrow(.), each=4))
+
+filt_diff_pairs_3_each <-  dplyr::filter(pairs_w_dist, target_other=="OTH")%>%
+                            dplyr::filter(.,phone_1!="z"&phone_2!="z")%>%
+                            dplyr::filter(.,phone_1!="ɽʱ"&phone_2!="ɽʱ")%>%
+                            dplyr::group_by(.,phone_1, phone_2, language_1) %>%
+                            dplyr::summarise(.,mean_dist = mean(distance))%>% 
+                            dplyr::ungroup(.) %>%
+                            dplyr::filter(.,language_1=="HIN") %>%
+                            dplyr::group_by(.,phone_1) %>%
+                            dplyr::top_n(., -3,mean_dist) %>%
+                            dplyr::ungroup(.) %>%
+                            dplyr::select(phone_1,phone_2,mean_dist) %>%
+                            dplyr::rename(. ,phone_HIN = phone_1, phone_ENG = phone_2)%>%
+                            dplyr::slice(rep(1:nrow(.), each=8))
+
                     
                   
-readr::write_csv(filt_diff_pairs, "diff_pairs_for_design.csv")
-#reorder phonemes so that they alternate which lang is first 
+readr::write_csv(filt_diff_pairs_4_each, OUTPUT_4_each)
 
-filt_diff_pairs$language_1 <-NA
-filt_diff_pairs$phone_1 <- NA
-filt_diff_pairs$phone_2 <- NA
-
-for (i in (1:nrow(filt_diff_pairs))) {
-  filt_diff_pairs$language_1[i] <- sample(c("HIN","ENG"),1)
-  }
-for (i in (1:nrow(filt_diff_pairs))) {             
-filt_diff_pairs$phone_1[i]<- ifelse(filt_diff_pairs$language_1[i]=="HIN",
-                    filt_diff_pairs$phone_HIN[i],
-                    filt_diff_pairs$phone_ENG[i])
-filt_diff_pairs$phone_2[i]<- ifelse(filt_diff_pairs$language_1[i]=="HIN",
-                                    filt_diff_pairs$phone_ENG[i],
-                                    filt_diff_pairs$phone_HIN[i])
-        }
-
-
-diff_pairs <-dplyr::select(filt_diff_pairs,"phone_1","phone_2","language_1") %>%
-                  dplyr::left_join(.,pairs_w_dist,
-                                    by=c("phone_1","phone_2","language_1"))%>%
-                  dplyr::group_by(phone_1,phone_2,language_1) %>%
-                  dplyr::sample_n(1)
+readr::write_csv(filt_diff_pairs_3_each, OUTPUT_3_each)
 
 
 
-same_pairs <- dplyr::filter(pairs_w_dist, target_other=="TGT")%>%
-              dplyr::filter(.,phone_1!="z"&phone_2!="z")%>%
-              dplyr::group_by(.,phone_1, phone_2, language_1) %>%
-              dplyr::sample_n(6)
-
-
-full_filt_pairs<-dplyr::bind_rows(diff_pairs,same_pairs)
-
-
-readr::write_csv(full_filt_pairs, OUTPUT)

@@ -46,7 +46,7 @@ stimuli_triplets: triplets.csv
 
 run_brms_mods: 
 	Rscript --vanilla 2_validation/run_brms_mods.R new_144 dinst2_30subjs \
-	2_validation/model_fits_rds/
+	2_validation/ model_fits_rds/
 
 lmeds_output/raw: 
 	mkdir -p lmeds_output_raw && python \

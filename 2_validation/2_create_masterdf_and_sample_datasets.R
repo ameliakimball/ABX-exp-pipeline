@@ -3,22 +3,33 @@
 
 `%>%`<-magrittr::`%>%`
 
+DESIGN_4each <- "2_validation/design_4_each.csv"
+DESIGN_3each <- "2_validation/design_3_each.csv"
+HINDI_SCORES <- "2_validation/hindi_scores.csv"
 
-hindi_scores_single_label <- read_delim("2_validation/hindi_scores_single_label_TAP_WRONG.csv", 
-                                      ";", escape_double = FALSE, trim_ws = TRUE) 
-hindi_scores <-dplyr::rename(hindi_scores_single_label,Phone_NOTENG=labels)
+hindi_scores <- readr::read_csv(HINDI_SCORES) 
+hindi_scores <- dplyr::rename(hindi_scores,Phone_NOTENG=phone)
 
-diff_pairs <- readr::read_csv("2_validation/diff_pairs_for_design.csv")
-diff_pairs_two <- dplyr::rename(diff_pairs,Phone_NOTENG=phone_HIN, Phone_ENG=phone_ENG)
 
-new_des<- dplyr::left_join(diff_pairs_two,hindi_scores,
+diff_pairs_4 <- readr::read_csv(DESIGN_4each)
+diff_pairs_4 <- dplyr::rename(diff_pairs_4,Phone_NOTENG=phone_HIN, Phone_ENG=phone_ENG)
+
+
+diff_pairs_3 <- readr::read_csv(DESIGN_3each)
+diff_pairs_3 <- dplyr::rename(diff_pairs_3,Phone_NOTENG=phone_HIN, Phone_ENG=phone_ENG)
+
+new_des_4<- dplyr::left_join(diff_pairs_4,hindi_scores,
                            by="Phone_NOTENG")
+
+new_des_3<- dplyr::left_join(diff_pairs_3,hindi_scores,
+                             by="Phone_NOTENG")
+
 
 
 
 #master df vars
-EXPERIMENT_NAME<- "new_144"
-DATA_INSTANCE <- "dinst2_30subjs"
+EXPERIMENT_NAME<- "3each_216"
+DATA_INSTANCE <- "dinst2_100subjs"
 MASTER_OUT_CSV <- paste0("master_df_",
                          EXPERIMENT_NAME,
                          "_",
@@ -27,9 +38,9 @@ MASTER_OUT_CSV <- paste0("master_df_",
 
 #data sampling vars
 DATA_SUB_FOLDER <- "2_validation/sampled_data"
-#DESIGN_CSV<- "exp_designs/fake_grid.csv"
-NUM_SUBJS = 30
+NUM_SUBJS = 100
 
+DESIGN_DF <-"2_validation/design_4_each.csv"
 
 ##################
 #create master df#
@@ -47,7 +58,7 @@ readr::write_csv(master_df, path=MASTER_OUT_CSV)
 #create csv datasets#
 #####################
 
-design_df <- new_des
+design_df <- new_des_3
 
 num_trials = nrow(design_df)
 
@@ -88,7 +99,7 @@ full_design$response_var <- 1
 
 
 ######################
-#sample data and save#
+#sample response_variable  and save#
 ######################
 
 
