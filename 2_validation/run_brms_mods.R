@@ -4,13 +4,13 @@
 ##### brms #####
 ################
 ARGS <- commandArgs(TRUE)
-EXPERIMENT <- ARGS[1] # "4each_144" #
+EXPERIMENT <-  ARGS[1] #"4each_144" #
 DATA_INST <- ARGS[2] #"dinst1_30subjs" #
-SUB_FOLDER <-ARGS[3] #2_validation/
+SUB_FOLDER <-ARGS[3] #"2_validation/" #  
 RDS_FOLDER <- ARGS[4] #"model_fits_rds/" #
 
 
-BATCH_SIZE <- 2
+BATCH_SIZE <- 4
 
 library(brms)
 library(doParallel)
