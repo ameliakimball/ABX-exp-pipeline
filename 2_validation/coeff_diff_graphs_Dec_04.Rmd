@@ -1,0 +1,262 @@
+---
+title: Accuracy in returning sampled coefficient
+author: "Amelia"
+date: "19/10/2019"
+output:
+  html_document: default
+  pdf_document: default
+---
+This document takes as inputs the final_master_df files created by calc_coeff_diffs_glm_brms.R
+
+```{r read in data, warnings = FALSE, message = FALSE,echo=FALSE}
+
+#number of subjects depends on isntance and is hard coded 
+
+# full compelement- correct and incorrect models 
+hindi_dinst7<-readr::read_csv("final_master_hindi_dinst7.csv") # coef 10, -10, 0
+  hindi_dinst7$numsubjs<- "old_design"
+hindi_dinst8<-readr::read_csv("final_master_hindi_dinst8.csv") # coef 10, -10,  0
+  hindi_dinst8$numsubjs<- "old_design"
+  
+three_each<-readr::read_csv("final_master_3each_216_dinst1_30subjs.csv") 
+  three_each$numsubjs<- "new_design"
+
+#hindi_dinst9<-readr::read_csv("final_master_hindi_dinst9.csv") # coef -.1,.1,0
+ # hindi_dinst9$numsubjs<- 30
+hindi_for_hists_full<-dplyr::bind_rows(hindi_dinst7,
+                                       hindi_dinst8,
+                                       three_each)
+
+                                     #  hindi_dinst9) 
+hindi_for_hists <-dplyr::filter(hindi_for_hists_full,is_correct_model==TRUE)
+
+
+  
+
+```
+
+## for the subset of correct models
+
+```{r glm diffs, echo=FALSE}
+
+ggplot2::ggplot(hindi_for_hists, ggplot2::aes(x = Econ_glm_diff)) +
+    ggplot2::geom_histogram(binwidth = .1,
+                            position="identity",
+                            alpha = 0.4)+
+    ggplot2::scale_x_continuous(limits = c(-10,10))+
+    ggplot2::ggtitle("Econ coef differenece,hindi data,
+                                        calculated by glm, by number of subjects")+
+    ggplot2::facet_grid(numsubjs ~ .)
+
+
+ggplot2::ggplot(hindi_for_hists, ggplot2::aes(x = Glob_glm_diff)) +
+    ggplot2::geom_histogram(binwidth = .1,
+                            position="identity",
+                            alpha = 0.4)+
+    ggplot2::scale_x_continuous(limits = c(-10,10))+
+    ggplot2::ggtitle("Glob coef differenece, hindi data,
+                     calculated by glm, by number of subjects")+
+    ggplot2::facet_grid(numsubjs ~ .)
+
+
+ggplot2::ggplot(hindi_for_hists, ggplot2::aes(x = Loc_glm_diff)) +
+    ggplot2::geom_histogram(binwidth = .1,
+                            position="identity",
+                            alpha = 0.4)+
+    ggplot2::scale_x_continuous(limits = c(-10,10))+
+    ggplot2::ggtitle("Loc coef differenece, hindi data,
+                                 calculated by glm, by number of subjects")+
+    ggplot2::facet_grid(numsubjs ~ .)
+
+
+
+
+```
+
+## for the full complement of correct and incorrect models
+### (returned model coef)-(input sampling coef) Faceted by whether a correct or incorrect model is applied, glm mods 
+
+```{r glm diffs full mods, echo=FALSE}
+
+ggplot2::ggplot(hindi_for_hists_full, ggplot2::aes(x = Econ_glm_diff)) +
+    ggplot2::geom_histogram(binwidth = .1,
+                            position="identity",
+                            alpha = 0.4)+
+    ggplot2::scale_x_continuous(limits = c(-10,10))+
+    ggplot2::ggtitle("Econ coef differenece,hindi data,
+                                        calculated by glm,")+
+    ggplot2::facet_grid(is_correct_model ~ .)
+
+
+ggplot2::ggplot(hindi_for_hists_full, ggplot2::aes(x = Glob_glm_diff)) +
+    ggplot2::geom_histogram(binwidth = .1,
+                            position="identity",
+                            alpha = 0.4)+
+    ggplot2::scale_x_continuous(limits = c(-10,10))+
+    ggplot2::ggtitle("Glob coef differenece, hindi data,
+                     calculated by glm")+
+    ggplot2::facet_grid(is_correct_model ~ .)
+
+
+ggplot2::ggplot(hindi_for_hists_full, ggplot2::aes(x = Loc_glm_diff)) +
+    ggplot2::geom_histogram(binwidth = .1,
+                            position="identity",
+                            alpha = 0.4)+
+    ggplot2::scale_x_continuous(limits = c(-10,10))+
+    ggplot2::ggtitle("Loc coef differenece, hindi data,
+                                 calculated by glm")+
+    ggplot2::facet_grid(is_correct_model ~ .)
+
+
+```
+
+
+(returned model coef)-(input sampling coef) Faceted by whether a correct or incorrect model is applied, brms mods 
+```{r brms diffs full mods, echo=FALSE}
+
+ggplot2::ggplot(hindi_for_hists_full, ggplot2::aes(x = Econ_brms_diff)) +
+    ggplot2::geom_histogram(binwidth = .1,
+                            position="identity",
+                            alpha = 0.4)+
+    #ggplot2::scale_x_continuous(limits = c(-10,10))+
+    ggplot2::ggtitle("Econ coef differenece,hindi data,
+                                        calculated by brms,")+
+    ggplot2::facet_grid(is_correct_model ~ .)
+
+
+ggplot2::ggplot(hindi_for_hists_full, ggplot2::aes(x = Glob_brms_diff)) +
+    ggplot2::geom_histogram(binwidth = .1,
+                            position="identity",
+                            alpha = 0.4)+
+   # ggplot2::scale_x_continuous(limits = c(-10,10))+
+    ggplot2::ggtitle("Glob coef differenece, hindi data,
+                     calculated by brms")+
+    ggplot2::facet_grid(is_correct_model ~ .)
+
+
+ggplot2::ggplot(hindi_for_hists_full, ggplot2::aes(x = Loc_brms_diff)) +
+    ggplot2::geom_histogram(binwidth = .1,
+                            position="identity",
+                            alpha = 0.4)+
+   # ggplot2::scale_x_continuous(limits = c(-10,10))+
+    ggplot2::ggtitle("Loc coef differenece, hindi data,
+                                 calculated by brms")+
+    ggplot2::facet_grid(is_correct_model ~ .)
+
+
+```
+
+
+```{r brms diffs reps, echo=FALSE}
+
+ggplot2::ggplot(hindi_reps, ggplot2::aes(x = Econ_brms_diff)) +
+    ggplot2::geom_histogram(binwidth = .1,
+                            position="identity",
+                            alpha = 0.4)+
+    ggplot2::scale_x_continuous(limits = c(-20,20))+
+    ggplot2::ggtitle("Econ coef differenece,hindi data,
+                                        calculated by brms,")+
+    ggplot2::facet_grid(is_correct_model ~ .)
+
+
+ggplot2::ggplot(hindi_reps, ggplot2::aes(x = Glob_brms_diff)) +
+    ggplot2::geom_histogram(binwidth = .1,
+                            position="identity",
+                            alpha = 0.4)+
+   ggplot2::scale_x_continuous(limits = c(-20,20))+
+    ggplot2::ggtitle("Glob coef differenece, hindi data,
+                     calculated by brms")+
+    ggplot2::facet_grid(is_correct_model ~ .)
+
+
+ggplot2::ggplot(hindi_reps, ggplot2::aes(x = Loc_brms_diff)) +
+    ggplot2::geom_histogram(binwidth = .1,
+                            position="identity",
+                            alpha = 0.4)+
+   ggplot2::scale_x_continuous(limits = c(-20,20))+
+    ggplot2::ggtitle("Loc coef differenece, hindi data,
+                                 calculated by brms")+
+    ggplot2::facet_grid(is_correct_model ~ .)
+
+
+ggplot2::ggplot(hindi_reps, ggplot2::aes(x = Econ_glm_diff)) +
+    ggplot2::geom_histogram(binwidth = .1,
+                            position="identity",
+                            alpha = 0.4)+
+    ggplot2::scale_x_continuous(limits = c(-10,10))+
+    ggplot2::ggtitle("Econ coef differenece,hindi data,
+                                        calculated by glm,")+
+    ggplot2::facet_grid(is_correct_model ~ .)
+
+
+ggplot2::ggplot(hindi_reps, ggplot2::aes(x = Glob_glm_diff)) +
+    ggplot2::geom_histogram(binwidth = .1,
+                            position="identity",
+                            alpha = 0.4)+
+    ggplot2::scale_x_continuous(limits = c(-10,10))+
+    ggplot2::ggtitle("Glob coef differenece, hindi data,
+                     calculated by glm")+
+    ggplot2::facet_grid(is_correct_model ~ .)
+
+
+ggplot2::ggplot(hindi_reps, ggplot2::aes(x = Loc_glm_diff)) +
+    ggplot2::geom_histogram(binwidth = .1,
+                            position="identity",
+                            alpha = 0.4)+
+    ggplot2::scale_x_continuous(limits = c(-10,10))+
+    ggplot2::ggtitle("Loc coef differenece, hindi data,
+                                 calculated by glm")+
+    ggplot2::facet_grid(is_correct_model ~ .)
+
+
+```
+
+<!-- ##variability in posterior draws for hindi model  -->
+<!-- these graphs show the sd for each of the 27 correct models for -->
+<!-- each of the four data instances for hindi -->
+
+<!-- plots faceted by number of subjects/data instance -->
+
+<!-- ```{r brms_plots_hindi, echo=FALSE} -->
+<!-- ggplot2::ggplot(hindi_for_hists, ggplot2::aes(x = econ_sd)) + -->
+<!--   ggplot2::geom_histogram(binwidth = .1,position="identity", alpha = 0.4)+ -->
+<!--   ggplot2::scale_x_continuous(limits = c(0,2))+ -->
+<!--   ggplot2::ggtitle("sds of econ posterior")+ -->
+<!--   ggplot2::facet_grid(numsubjs ~ .) -->
+
+<!-- ggplot2::ggplot(hindi_for_hists, ggplot2::aes(x = glob_sd)) + -->
+<!--   ggplot2::geom_histogram(binwidth = .1,position="identity", alpha = 0.4)+ -->
+<!--   ggplot2::scale_x_continuous(limits = c(0,2))+ -->
+<!--   ggplot2::ggtitle("sds of glob posterior")+ -->
+<!--   ggplot2::facet_grid(numsubjs ~ .) -->
+
+<!-- ggplot2::ggplot(hindi_for_hists, ggplot2::aes(x = econ_sd)) + -->
+<!--   ggplot2::geom_histogram(binwidth = .1,position="identity", alpha = 0.4)+ -->
+<!--   ggplot2::scale_x_continuous(limits = c(0,2))+ -->
+<!--   ggplot2::ggtitle("sds of loc posterior")+ -->
+<!--   ggplot2::facet_grid(numsubjs ~ .) -->
+
+<!-- ``` -->
+
+<!-- rhats for hindi models --  -->
+
+<!-- ```{r brms_hindi_rhats, echo=FALSE} -->
+<!-- ggplot2::ggplot(hindi_for_hists, ggplot2::aes(x = Econ_brms_rhat)) + -->
+<!--   ggplot2::geom_histogram(binwidth = .1,position="identity", alpha = 0.4)+ -->
+<!--   ggplot2::scale_x_continuous(limits = c(0,2))+ -->
+<!--   ggplot2::ggtitle("rhats of econ")+ -->
+<!--   ggplot2::facet_grid(numsubjs ~ .) -->
+
+<!-- ggplot2::ggplot(hindi_for_hists, ggplot2::aes(x = Glob_brms_rhat)) + -->
+<!--   ggplot2::geom_histogram(binwidth = .1,position="identity", alpha = 0.4)+ -->
+<!--   ggplot2::scale_x_continuous(limits = c(0,2))+ -->
+<!--   ggplot2::ggtitle("rhats glob")+ -->
+<!--   ggplot2::facet_grid(numsubjs ~ .) -->
+
+<!-- ggplot2::ggplot(hindi_for_hists, ggplot2::aes(x = Loc_brms_rhat)) + -->
+<!--   ggplot2::geom_histogram(binwidth = .1,position="identity", alpha = 0.4)+ -->
+<!--   ggplot2::scale_x_continuous(limits = c(0,2))+ -->
+<!--   ggplot2::ggtitle("rhats  loc")+ -->
+<!--   ggplot2::facet_grid(numsubjs ~ .) -->
+
+<!-- ``` -->
