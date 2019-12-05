@@ -49,6 +49,8 @@ for (batch_start in batch_starts){
     
     out_file = paste0(SUB_FOLDER,
                       RDS_FOLDER,
+                      EXPERIMENT,
+                      "/",
                       model_fit_filename(master_df[i,]))
     
     
