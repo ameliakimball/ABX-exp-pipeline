@@ -10,7 +10,6 @@ HINDI_SCORES <- "2_validation/hindi_scores.csv"
 hindi_scores <- readr::read_csv(HINDI_SCORES) 
 hindi_scores <- dplyr::rename(hindi_scores,Phone_NOTENG=phone)
 
-
 diff_pairs_4 <- readr::read_csv(DESIGN_4each)
 diff_pairs_4 <- dplyr::rename(diff_pairs_4,Phone_NOTENG=phone_HIN, Phone_ENG=phone_ENG)
 
@@ -28,8 +27,8 @@ new_des_3<- dplyr::left_join(diff_pairs_3,hindi_scores,
 
 
 #master df vars
-EXPERIMENT_NAME<- "3each_216"
-DATA_INSTANCE <- "dinst2_100subjs"
+EXPERIMENT_NAME<- "4each_zeroes"
+DATA_INSTANCE <- "dinst11_30subjs"
 MASTER_OUT_CSV <- paste0("master_df_",
                          EXPERIMENT_NAME,
                          "_",
@@ -38,9 +37,9 @@ MASTER_OUT_CSV <- paste0("master_df_",
 
 #data sampling vars
 DATA_SUB_FOLDER <- "2_validation/sampled_data"
-NUM_SUBJS = 100
+NUM_SUBJS = 30
 
-DESIGN_DF <-"2_validation/design_4_each.csv"
+DESIGN_DF <- new_des_4
 
 ##################
 #create master df#
@@ -48,7 +47,7 @@ DESIGN_DF <-"2_validation/design_4_each.csv"
 create_masterdf<-"2_validation/fn_create_masterdf_function_pos_neg.R"
 source(create_masterdf)
 master_df<- create_masterdf(vars=c("econ","glob","loc"),
-                            coef_vals=c(-1,0,1),
+                            coef_vals=c(-.1,0,.1),
                             exp_name= EXPERIMENT_NAME,
                             data_inst= DATA_INSTANCE)
                             

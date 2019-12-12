@@ -25,12 +25,13 @@ source(model_fns)
 source("2_validation/fn_build_brms_formula.R")
 source("2_validation/fn_build_brms_priors.R")
 
-master_df<-readr::read_csv(paste0(SUB_FOLDER,
-                                  "master_df_",
-                                  EXPERIMENT,
-                                  "_",
-                                  DATA_INST,
-                                  ".csv"))
+master_df<-readr::read_csv("2_validation/master_df_4each_zeroes_dinst11_30subjs.csv")
+  #paste0(SUB_FOLDER,
+                            #      "master_df_",
+                             #     EXPERIMENT,
+                              #    "_",
+                               #   DATA_INST,
+                                #  ".csv"))
 
 EXP_DATA_COMB <- paste0(EXPERIMENT,"_",DATA_INST)
 
