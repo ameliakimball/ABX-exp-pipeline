@@ -55,23 +55,25 @@ for (batch_start in batch_starts){
     
     
     if (!filename %in% filelist){
-      formulanl <- build_brms_formula(posvars = master_df$m_pos_vars[i],
-                                      normvars = "acoustic_distance",
-                                      negvars = master_df$m_neg_vars[i])
+      formula <- response_var ~ acoustic_distance + (1|subject) + (1|item)
+                   #build_brms_formula(posvars = master_df$m_pos_vars[i],
+                   #                   normvars = "acoustic_distance",
+                   #                   negvars = master_df$m_neg_vars[i])
         
-      priornl <- build_brms_priors(posvars = master_df$m_pos_vars[i],
-                                   normvars = "acoustic_distance",
-                                   negvars = master_df$m_neg_vars[i])
+      prior <- brms::set_prior("normal(0,10)",class = "b")
+                  #build_brms_priors(posvars = master_df$m_pos_vars[i],
+                            #       normvars = "acoustic_distance",
+                             #      negvars = master_df$m_neg_vars[i])
         
       brms_data <- readr::read_csv(paste0(SUB_FOLDER,"sampled_data/",master_df$csv_filename[i]))
       
      # not_run <- TRUE # this is supposed to help restart when the program is stuck
       #while (not_run) { #but isntead it breaks the whole thing. 
      #   tryCatch({
-          brms_mods[[i]] <- brms::brm(formulanl,
+          brms_mods[[i]] <- brms::brm(formula,
                                             data = brms_data,
                                             family = 'bernoulli',
-                                            prior = priornl,
+                                            prior = prior,
                                             chains = 4,
                                             cores = 4,
                                             save_all_pars = TRUE)
