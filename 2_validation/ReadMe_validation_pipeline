@@ -1,0 +1,89 @@
+
+Model validation pipeline 
+
+
+Before beginning: 
+
+This pipeline takes as input a design csv (e.g. design_4each.csv). These have been created based on two files (files and script to merge also present)
+
+  file 1) acoustic distance file (e.g. "ac_dists_3each.csv"), which is a list of acoustic    distances of length number of trials.  (the output of stimuli_selection.R, part of the larger pipeline) 
+  ***ATTENTION: these acoustic distances are simply the MEAN distance for each pair, repeated the number of times indicated (3 each or 4 each) if you are re-running models consider adding jitter or other noise***
+ 
+file 2) "hindi_scores.csv" which is a list of all the hindi sounds and their geomphon scores. 
+
+
+There are three experiment design csv options right now: 
+-"3each" (an experiment in which each of 9 hindi sounds is paired with 3 familiar sounds. those 27 pairs are each repeated 8 times for a design of length 216 trials)
+-"4each"(an experiment in which each of 9 hindi sounds is paired with 4 familiar sounds. those 36 pairs are each repeated 4 times for a design of length 144 trials)
+-"hindi"(the old experiment, in which instead of picking a subset of pairs we used all pairs and repeated them very little (twice or no repetitions))
+
+***NOTE: these designs includes only 9 sounds (as a result of the stimuli choice pipeline) and do NOT include "ɽʱ" because we didn't have the scores for it. 
+
+(run by hand once for each new design, has already been run for the above:
+
+0. join the hindi_scores.csv and the design csv in order to create the full design csv. already completed and output files present)
+
+
+The pipeline proper:  (run  from the Makefile)
+
+1. CREATE MASTER DATA FRAME "1_create_masterdf.R"
+The master dataframe script takes input of 
+  -desired coefficient values (a list of three values, all values will be applied to all predictors)
+  -the name of the data instance (will be incorporated into modelfitname)
+  -the experiment name (will be incorporated into modelfitname)
+
+It creates a df of length 216, (8 models x 3predictors x 3 different coeff values).
+Each line of the df specifies a modelfit 
+
+***note that the stan model name exists in this df, and is now unecessary and should be removed.  Has not yet been removed due to lack of time and backwards compatibility**
+
+
+1a) make zero masters:  to create the masters for the zero models, first create the regular master, then run 1a_create_zero_masters.R which filters the above, and creates a master df of length 108  which is just the 27 coeff combinations repeated four times.  
+
+THIS SHOULD NOT HAPPEN REPETITION! !ES NO BUENO!
+
+
+2. SAMPLE DATASETS "2_sample_data.R"
+This takes a master_df and samples a dataset for all the unique names in the csv_filename column of the master_df.  a masterdf is specific to a data instance Note that ***the effect of acoustic distance (calculated from pilot data) is hard coded in this script***
+
+***Note that I had taken to adding the number of subjects to the data instance name (dinst10_30subjs) just for clarity. (Useful to know when chosing models to run since obviously more subjects = more time) BUT the number of subjects is specified here at sampling, whereas the data instance is given it's name at the master df.  
+
+
+3. RUN MODELS 
+as appropriate, run either run_brms_mods.R  (for any non-zero masters) OR run_brms_ZERO_mods.R (for any zero masters)
+
+as a reminder, each model .rds  is dependent on: 
+  -the experiment design 
+  -the data instance 
+  -the model applied (specified in the masterdf)
+  
+***ATTENTION: run_brms_ZERO_mods.R is just a dumb version of run_brms_mods.R that has a zero model hard coded. This is because the run_brms_mods.R uses the non linear syntax in order to effectuate the truncation, and it will break if you pass it no coeffs.  Would obviously be better if both were joined in a function with if logic.****
+
+
+This should be launched in a tmux from the command line. Each model with 30 subjects takes ~5 min to run, (sometimes faster-haven't looked into why the variability)
+
+***there is code commented out that is supposed to re-start this process if it stops for no reason (which it occasionally does).  However, this code itself caused the whole thing to break, and has never been debugged. apologies. ****
+
+
+4. coeff_diffs 
+This script takes as input the master df for an experiment, and for each modelfit it calculates the difference between the coefficient input in the sampling process and two different models: 
+  first, the coeff returned by a simple glm() and the coeff on which the data was sampled
+  second, the difference between the mean of the posterior of the brms and the coeff on which the data was sampled.  
+
+The accompanying .rmd coeff_diff_graphs_Dec_04 provides visualizations of these, but right now is hard coded for certain datasets and not updated. Essentially, it's mothballed, and included here for parts. 
+
+
+5. pair models for bayes factos "create_paired_mods_for_bayes_factor.R"
+
+use  to create a list of paired models,
+
+6. calculate bayes factors "calculate_bayes_factors.R"
+then calculate the bayes factors with 
+
+
+
+
+
+
+
+
