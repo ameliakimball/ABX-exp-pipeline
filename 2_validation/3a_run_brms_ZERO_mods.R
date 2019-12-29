@@ -1,16 +1,16 @@
 #!/usr/bin/env Rscript
+#author: Amelia 
+#last edit: dec 28 2019
+#Runs brms mods with a zero model hard coded 
+#number of cores is also hard coded at 20 
 
-################
-##### brms #####
-################
 ARGS <- commandArgs(TRUE)
 EXPERIMENT <-  ARGS[1] #"4each_144" #
 DATA_INST <- ARGS[2] #"dinst1_30subjs" #
 SUB_FOLDER <-ARGS[3] #"2_validation/" #  
 RDS_FOLDER <- ARGS[4] #"model_fits_rds/" #
+BATCH_SIZE <- ARGS [5] #4
 
-
-BATCH_SIZE <- 4
 
 library(brms)
 library(doParallel)
@@ -19,19 +19,16 @@ options(cores=20) #ceiling number of cores to use total
 options(mc.cores = 4)#cores per model (= should equal numb of chains) 
 registerDoParallel(cores=4)
 
-model_fns <-"2_validation/fn_model_comparison_functions.R"
-source(model_fns)
-
+source("2_validation/fn_model_comparison_functions.R")
 source("2_validation/fn_build_brms_formula.R")
 source("2_validation/fn_build_brms_priors.R")
 
-master_df<-readr::read_csv("2_validation/master_df_4each_zeroes_dinst11_30subjs.csv")
-  #paste0(SUB_FOLDER,
-                            #      "master_df_",
-                             #     EXPERIMENT,
-                              #    "_",
-                               #   DATA_INST,
-                                #  ".csv"))
+master_df<-readr::read_csv(paste0(SUB_FOLDER,
+                                  "master_df_",
+                                  EXPERIMENT,
+                                  "_",
+                                  DATA_INST,
+                                  ".csv"))
 
 EXP_DATA_COMB <- paste0(EXPERIMENT,"_",DATA_INST)
 
@@ -57,14 +54,10 @@ for (batch_start in batch_starts){
     
     if (!filename %in% filelist){
       formula <- response_var ~ acoustic_distance + (1|subject) + (1|item)
-                   #build_brms_formula(posvars = master_df$m_pos_vars[i],
-                   #                   normvars = "acoustic_distance",
-                   #                   negvars = master_df$m_neg_vars[i])
+     
         
       prior <- brms::set_prior("normal(0,10)",class = "b")
-                  #build_brms_priors(posvars = master_df$m_pos_vars[i],
-                            #       normvars = "acoustic_distance",
-                             #      negvars = master_df$m_neg_vars[i])
+
         
       brms_data <- readr::read_csv(paste0(SUB_FOLDER,"sampled_data/",master_df$csv_filename[i]))
       

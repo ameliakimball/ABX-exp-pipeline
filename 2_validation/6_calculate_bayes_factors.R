@@ -1,22 +1,18 @@
 #!/usr/bin/env Rscript
+#author Amelia ameliak@bu.edu
+# last edit Dec 28 2019
 
-library(Rcpp)
-library(rstan)
-library(brms)
 
-#ARGS <- commandArgs(TRUE)
+ARGS <- commandArgs(TRUE)
 
-ZERO_FOLDER <- "2_validation/model_fits_rds/4each_zeroes" # ARGS[1] # 
-POS_FOLDER  <-  "2_validation/model_fits_rds/4each_144"   # ARGS[2] #
-PAIRS_FILE <-  "2_validation/pairs_for_bf.csv" # ARGS [3] #
+ZERO_FOLDER <- ARGS[1] # "2_validation/model_fits_rds/4each_zeroes" # 
+POS_FOLDER  <- ARGS[2] # "2_validation/model_fits_rds/4each_144"   # 
+PAIRS_FILE  <- ARGS [3] # "2_validation/pairs_for_bf.csv" # 
   
-pairs_df <- readr::read_csv(PAIRS_FILE) # 
+pairs_df <- readr::read_csv(PAIRS_FILE) 
 
 list_pos_mods <- list.files(POS_FOLDER)
 list_zero_mods <-list.files(ZERO_FOLDER)
-
-
-#library(brms) #necessary to load whole library if using bayestestR() for bayesfactor
 
 
 pairs_df$bf <- NA 

@@ -8,7 +8,7 @@ ARGS <- commandArgs(TRUE)
 
 EXPERIMENT_NAME <- ARGS[1] #"4each_zeroes" # 
 DATA_INSTANCE   <- ARGS[2] #"dinst11_30subjs" # 
-COEF_VAL        <- ARGS[3] #.001
+COEF_VAL        <- ARGS[3] #
 
 COEF_VALS <- c(COEF_VAL,0,-COEF_VAL)
 

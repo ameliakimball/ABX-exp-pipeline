@@ -1,8 +1,21 @@
+#!/usr/bin/env Rscript
+#author Amelia ameliak@bu.edu
+# last edit Dec 28 2019
+
+`%>%`<-magrittr::`%>%`
+ARGS <- commandArgs(TRUE)
+
+NUM_SUBJS       <- ARGS[1] # = 30#
+DESIGN_FILENAME <- ARGS[2] # "design_3each.csv"#
+DATA_SUB_FOLDER <- ARGS[3] #"2_validation/sampled_data"  #
+MASTER_DF       <- ARGS[4]
+
+
+
 #####################################################
 #create csv dataset with arbitrary response variable#
 #####################################################
-
-design_df <- new_des_3
+design_df <- readr::read_csv(DESIGN_FILENAME)
 
 num_trials = nrow(design_df)
 
@@ -45,7 +58,7 @@ full_design$response_var <- 1
 ######################
 #sample response_variable and savecsv#
 ######################
-
+master_df <- readr::read_csv(MASTER_DF)
 
 sample_binary_four<-"2_validation/fn_sample_binary_four_function.R"
 source(sample_binary_four)
@@ -76,6 +89,4 @@ for (i in 1:nrow(corr_mods)){
   
   readr::write_csv(data_i,path = paste0(DATA_SUB_FOLDER,"/",uniq_filenames[i]))
 }
-
-
 

@@ -1,8 +1,7 @@
 #!/usr/bin/env Rscript
+#author Amelia ameliak@bu.edu
+# last edit Dec 28 2019
 
-################
-##### brms #####
-################
 ARGS <- commandArgs(TRUE)
 EXPERIMENT <-  ARGS[1] #"4each_144" #
 DATA_INST <- ARGS[2] #"dinst1_30subjs" #

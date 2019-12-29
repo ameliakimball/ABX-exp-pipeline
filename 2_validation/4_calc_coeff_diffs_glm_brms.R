@@ -1,24 +1,27 @@
-### builds csvs that include difference scores for glms and brms mods. 
+#!/usr/bin/env Rscript
+#author Amelia ameliak@bu.edu
+#last edit Dec 28 2019
 
-`%>%` <- magrittr::`%>%`
+ARGS <- commandArgs(TRUE)
+EXPERIMENT <- ARGS[1] #"4each_144" #
+DATA_INST  <- ARGS[2] #"dinst1_30subjs" #
+SUB_FOLDER <- ARGS[3] #"2_validation/" #  
+RDS_FOLDER <- ARGS[4] #"model_fits_rds/" #
 
-# This script must be run for each data instance 
-#NB fake grid does not have acoustic distance or item 
-
-model_comps<-"fn_model_comparison_functions.R"
-source(model_comps)
-#nb these functions must come first because they also have experiment settigns,
-#and willoverwrite below variables if come after
-
-EXPERIMENT <- "4each_144"
-DATA_INST <- "dinst1_30subjs"
 
 EXP_DATA_COMB <- paste0(EXPERIMENT,"_",DATA_INST)
 
 
-######
-#glm 
-######
+`%>%` <- magrittr::`%>%`
+
+
+model_comps<-"fn_model_comparison_functions.R"
+source(model_comps)
+
+
+#####
+#glm#
+#####
       master_df <-readr::read_csv(paste0("master_df_",EXP_DATA_COMB,".csv"))
       
       
@@ -43,7 +46,7 @@ EXP_DATA_COMB <- paste0(EXPERIMENT,"_",DATA_INST)
         sum_list[[i]]<- summary(mod_list[[i]])
 
         master_df$Econ_coef_glm[i]<-sum_list[[i]]$coefficients[2] #Econ
-        master_df$Glob_coef_glm[i]<-sum_list[[i]]$coefficients[3] #glob
+        master_df$Glob_coef_glm[i]<-sum_list[[i]]$coefficients[3] #Glob
         master_df$Loc_coef_glm[i]<-sum_list[[i]]$coefficients[4] #Loc
         master_df$ac_dist_coef_glm[i]<-sum_list[[i]]$coefficients[5] #acoustic_distance
       }
@@ -57,10 +60,6 @@ EXP_DATA_COMB <- paste0(EXPERIMENT,"_",DATA_INST)
       
       
       
-###########
-#ASSUMING AT THIS POINT THAT BRMS HAVE BEEN RUN USING run_brms_mods.R
-      
-      
 brms_fixef <- vector(mode = "list")
 brms_mods  <- vector(mode = "list")
 econ_post  <- vector(mode="list")
@@ -68,7 +67,7 @@ glob_post  <- vector(mode="list")
 loc_post   <- vector(mode="list")
 beta_post  <- vector(mode="list")
       
-master_df$intercept_brms_coef <- NA
+master_df$intercept_brms_coef <-NA
 master_df$Econ_brms_coef      <-NA
 master_df$Glob_brms_coef      <-NA
 master_df$Loc_brms_coef       <-NA
@@ -100,25 +99,6 @@ for (i in 1:nrow(master_df)){
     master_df$Loc_brms_coef[i]        <- brms_fixef[[i]][grep("*Loc",row.names(brms_fixef[[i]])),"Estimate"]
     
     
-    # 
-    # master_df$intercept_brms_rhat[i] <-   rhat(brms_mods[[i]])[[1]]
-    # master_df$Econ_brms_rhat[i]      <-   rhat(brms_mods[[i]])[[2]]
-    # master_df$Glob_brms_rhat[i]      <-   rhat(brms_mods[[i]])[[3]]
-    # master_df$Loc_brms_rhat[i]       <-   rhat(brms_mods[[i]])[[4]]
-    # master_df$ac_dist_brms_rhat[i]   <-   rhat(brms_mods[[i]])[[5]]
-
-#removed because of change in naming 
-    
- # beta_post[[i]] <- brms::posterior_samples(brms_mods[i], "^b")
- # 
- #     econ_post[[i]] <- beta_post[[i]][["b_Econ"]]
- #     glob_post[[i]] <- beta_post[[i]][["b_Glob"]]
- #     loc_post[[i]]  <- beta_post[[i]][["b_Loc"]]
- #     
- #     master_df$econ_sd[i] <- sd(econ_post[[i]])
- #     master_df$glob_sd[i] <- sd(glob_post[[i]])
- #     master_df$loc_sd[i]  <- sd(glob_post[[i]])
- 
 }
 
 master_df<- 
