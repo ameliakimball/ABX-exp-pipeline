@@ -5,11 +5,12 @@
 
 included below are three types of messages:
 
-NOTES: alerting you to improtant points or quirks of the pipeline
 
 FIXME: problems that should be fixed before running any models 
 (only two tiny things: need to pass numbers as arguments in makefile. I assume 
-this is simple, I have just run out of time to  google it)
+this is simple, I have just run out of time to google it)
+
+NOTES: alerting you to important points or quirks of the pipeline
 
 IMPROVE: alerting you to things which are functional, but done in a dumb way,
 for which you may want to implement a quick fix before you launch more models.  
@@ -25,7 +26,6 @@ created based on two files (files and script to merge also present)
 
   file 1) acoustic distance file (e.g. "ac_dists_3each.csv"), which is a list of
   acoustic distances of length number of trials. 
-
 
 **NOTE: these acoustic distances are simply the MEAN distance for each pair, 
 repeated the number of times indicated (3 each or 4 each, see design explanation
@@ -55,7 +55,6 @@ we didn't have the scores for it.**
 The script to join these files (0_combine_ac_dist_geomphon_scores.R) is hard 
 coded and is not in the makefile (and has already been run and  output files are
 present, so skip this step if you are using one of the designs already present.)
-
 
 
 ###################################
@@ -221,7 +220,6 @@ with an additional column containing the bayes factors.
 
 
 This actually calculates the bayes factors, and saves them in a .csv 
-
 
 
 #######################################

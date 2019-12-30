@@ -42,12 +42,39 @@ final_stimuli_list.csv:  exp_length_stim_list.csv
 exp_length_triplets.csv final_stimuli_list.csv
 
 stimuli_triplets: triplets.csv
-	python 1_stimuli/save_triplets_to_wavs.py triplets.csv stimuli_triplets 
+	python 1_stimuli/save_triplets_to_wavs.py triplets.csv stimuli_triplets
 
+create_master_df:
+	Rscript --vanilla 2_validation/1_create_masterdf.R 4each_zeroes \
+	dinst_TEST 
+	
+sample_datasets:
+	mkdir 2_validation/sampled_data/dinst_TEST \
+	&& Rscript --vanilla 2_validation/2_sample_data.R \
+	2_validation/design_4each.csv \
+	2_validation/sampled_data \
+	2_validation/master_dfs/master_df_4each_zeroes_dinst_TEST.csv
+	
 run_brms_mods: 
-	Rscript --vanilla 2_validation/run_brms_mods.R new_144 dinst2_30subjs \
+	Rscript --vanilla 2_validation/run_brms_mods.R 4each_144 dinst1_30subjs \
 	2_validation/ model_fits_rds/
 
+run_brms_zero_mods:
+	Rscript --vanilla 2_validation/run_brms_ZERO_mods.R 4each_zeroes dinst1_30subjs \
+	2_validation/ model_fits_rds/
+
+calc_coeff_diffs:
+	Rscript --vanilla 2_validation/4_calc_coeff_diffs_glm_brms.R 4each_144 \
+	dinst1_30subjs 2_validation/ model_fits_rds/
+
+create_bayes_pairs:
+	Rscript --vanilla 2_validation/5_create_paired_mods_for_bayes_factor.R \
+
+calc_bayes_factors:
+	Rscript --vanilla 2_validation/6_calculate_bayes_factors.R \
+	2_validation/model_fits_rds/4each_zeroes 2_validation/model_fits_rds/4each_144 \
+	2_validation/pairs_for_bf.csv
+	
 lmeds_output/raw: 
 	mkdir -p lmeds_output_raw && python \
 ../../src/anonymize_lmeds_data_filenames.py ${RAW_DATA_PATH} lmeds_output/raw \
