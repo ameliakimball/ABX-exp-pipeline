@@ -22,7 +22,10 @@ source(model_comps)
 #####
 #glm#
 #####
-      master_df <-readr::read_csv(paste0("master_df_",EXP_DATA_COMB,".csv"))
+      master_df <-readr::read_csv(paste0("master_dfs/",
+                                         "master_df_",
+                                         EXP_DATA_COMB,
+                                         ".csv"))
       
       
       data_list <- vector(mode = "list")

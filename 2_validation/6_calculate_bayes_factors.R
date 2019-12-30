@@ -1,13 +1,14 @@
 #!/usr/bin/env Rscript
 #author Amelia ameliak@bu.edu
-# last edit Dec 28 2019
+#last edit Dec 28 2019
 
 
 ARGS <- commandArgs(TRUE)
 
 ZERO_FOLDER <- ARGS[1] # "2_validation/model_fits_rds/4each_zeroes" # 
 POS_FOLDER  <- ARGS[2] # "2_validation/model_fits_rds/4each_144"   # 
-PAIRS_FILE  <- ARGS [3] # "2_validation/pairs_for_bf.csv" # 
+PAIRS_FILE  <- ARGS[3] # "2_validation/pairs_for_bf.csv" # 
+OUT_FILE    <- ARGS[4] # "bayes_factors.csv"
   
 pairs_df <- readr::read_csv(PAIRS_FILE) 
 
@@ -39,6 +40,7 @@ for (i in (1:nrow(pairs_df))) {
   
 }
 
-readr::write_csv(pairs_df, "bayes_factors.csv")
+readr::write_csv(pairs_df, OUT_FILE)
+
 
 

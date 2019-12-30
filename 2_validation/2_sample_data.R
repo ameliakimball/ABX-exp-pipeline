@@ -3,13 +3,13 @@
 # last edit Dec 28 2019
 
 `%>%`<-magrittr::`%>%`
-ARGS <- commandArgs(TRUE)
 
-NUM_SUBJS       <- ARGS[1] # = 30#
-DESIGN_FILENAME <- ARGS[2] # "design_3each.csv"#
-DATA_SUB_FOLDER <- ARGS[3] #"2_validation/sampled_data"  #
-MASTER_DF       <- ARGS[4]
+ARGS <- commandArgs(TRUE) 
 
+DESIGN_FILENAME <- ARGS[1] # "2_validation/design_4each.csv"# 
+DATA_SUB_FOLDER <- ARGS[2] #"2_validation/sampled_data"  # 
+MASTER_DF       <- ARGS[3] # "2_validation/master_dfs/master_df_4each_zeroes_dinst_TEST.csv" #
+NUM_SUBJS       = 30 # ARGS[4] # 
 
 
 #####################################################
